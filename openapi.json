@@ -1,0 +1,219 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "This is weather API design. In this project, I have created two endpoints. One accepts PUT method with array of objects - all of them describing weather conditions in the location specified by a path parameter. The second one fetches weather for a city for a day specified by a path parameter. ",
+    "version": "1.0.0",
+    "title": "Weather API",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags": [
+    {
+      "name": "pet",
+      "description": "Update and fetch weather for 5 days",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "paths": {
+    "/cities/{cityId}/weather": {
+      "put": {
+        "tags": [
+          "weather"
+        ],
+        "summary": "Update weather for the city",
+        "requestBody": {
+          "description": "Accepts Forecasts objects",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Forecast"
+              }
+            }
+          }
+        },
+        "description": "",
+        "operationId": "updateWeather",
+        "parameters": [
+          {
+            "name": "cityId",
+            "in": "path",
+            "description": "Id of the city updated",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The forecast for the city has been succesfully updated."
+          },
+          "400": {
+            "description": "Invalid city id supplied"
+          },
+          "404": {
+            "description": "City not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/cities/{cityId}/weather/{day}": {
+      "get": {
+        "tags": [
+          "pet"
+        ],
+        "summary": "Updates city forecast for at least today and tomorrow",
+        "description": "",
+        "operationId": "updateForecastForCity",
+        "parameters": [
+          {
+            "name": "cityId",
+            "in": "path",
+            "description": "City Id to update weather",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "day",
+            "in": "path",
+            "description": "Day to fetch weather - can have a string today or tomorrow value or integer 0 to 4, where 0 will return today.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/AnyValue"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Forecast fetched",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastObject"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid city id supplied"
+          },
+          "404": {
+            "description": "City not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          },
+          "423": {
+            "description": "Invalid day provided, forecast is not available"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Forecast": {
+        "type": "object",
+        "required": [
+          "today",
+          "tomorrow"
+        ],
+        "properties": {
+          "today": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ForecastObject"
+            }
+          },
+          "tomorrow": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ForecastObject"
+            }
+          },
+          "day2": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ForecastObject"
+            }
+          },
+          "day3": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ForecastObject"
+            }
+          },
+          "day4": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ForecastObject"
+            }
+          }
+        },
+        "xml": {
+          "name": "Forecast"
+        }
+      },
+      "ForecastObject": {
+        "type": "object",
+        "required": [
+          "today",
+          "tomorrow"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "temp_c": {
+            "type": "number"
+          },
+          "temp_f": {
+            "type": "number"
+          },
+          "wind_mph": {
+            "type": "number"
+          },
+          "pressure_in": {
+            "type": "number"
+          }
+        }
+      },
+      "AnyValue": {
+        "description": "The parameter of this type will accept only specific string and integers",
+        "oneOf": [
+          {
+            "type": "string",
+            "enum": [
+              "today",
+              "tomorrow"
+            ]
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          }
+        ]
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}
